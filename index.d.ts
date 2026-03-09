@@ -6,6 +6,7 @@ export declare class ClientOptions {
   headerOrder?: Array<string>
   splitCookies?: boolean
   debug?: boolean
+  timeout?: number
 }
 
 export declare class QueryEngine {}
@@ -40,4 +41,5 @@ export declare function newOptions(
   headerOrder?: Array<string> | undefined | null,
   splitCookies?: boolean | undefined | null,
   debug?: boolean | undefined | null,
+  timeout?: number | undefined | null,
 ): ClientOptions

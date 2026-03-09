@@ -1,5 +1,4 @@
 mod traits;
-use std::time::Duration;
 use ::cookie::CookieBuilder;
 use ::wreq::cookie::Cookie;
 use foldhash::fast::RandomState;
@@ -11,6 +10,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::runtime::Runtime;
 use tokio::sync::Mutex;
 use traits::HeadersTraits;
@@ -58,7 +58,7 @@ fn new_options(
     header_order,
     split_cookies,
     debug,
-    timeout
+    timeout,
   }
 }
 #[napi(object, js_name = "HttpResponse")]
@@ -129,7 +129,7 @@ impl TlsClient {
       .headers(default_header.clone());
     client_builder = client_builder.emulation(builder.build());
     client_builder = client_builder.default_headers(default_header);
-    if let Some(t) = opt.timeout{
+    if let Some(t) = opt.timeout {
       client_builder = client_builder.timeout(Duration::from_secs(t as u64));
     }
     let client = client_builder.build().unwrap();
