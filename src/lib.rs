@@ -39,6 +39,7 @@ pub struct ClientOptions {
   pub header_order: Option<Vec<String>>,
   pub split_cookies: Option<bool>,
   pub debug: Option<bool>,
+  pub timeout: i32,
 }
 
 #[napi]
@@ -48,6 +49,7 @@ fn new_options(
   header_order: Option<Vec<String>>,
   split_cookies: Option<bool>,
   debug: Option<bool>,
+  timeout: Option<i32>,
 ) -> ClientOptions {
   ClientOptions {
     proxy,
@@ -55,6 +57,7 @@ fn new_options(
     header_order,
     split_cookies,
     debug,
+    timeout
   }
 }
 #[napi(object, js_name = "HttpResponse")]
@@ -125,6 +128,7 @@ impl TlsClient {
       .headers(default_header.clone());
     client_builder = client_builder.emulation(builder.build());
     client_builder = client_builder.default_headers(default_header);
+    client_builder = client_builder.timeout(time::Duration::from_secs(opts.timeout));
     let client = client_builder.build().unwrap();
     Self {
       client: Mutex::new(client),

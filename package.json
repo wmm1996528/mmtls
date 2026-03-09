@@ -7,6 +7,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/napi-rs/package-template.git"
   },
+  "type": "module",
   "license": "MIT",
   "browser": "browser.js",
   "keywords": [
