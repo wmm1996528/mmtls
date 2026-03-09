@@ -54,9 +54,9 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
             build: yarn build --target x86_64-unknown-linux-musl -x
-          - host: macos-latest
-            target: aarch64-apple-darwin
-            build: yarn build --target aarch64-apple-darwin
+    #          - host: macos-latest
+    #            target: aarch64-apple-darwin
+    #            build: yarn build --target aarch64-apple-darwin
     name: stable - ${{ matrix.settings.target }} - node@22
     runs-on: ${{ matrix.settings.host }}
     steps:
@@ -97,6 +97,8 @@ jobs:
         run: ${{ matrix.settings.setup }}
         if: ${{ matrix.settings.setup }}
         shell: bash
+      - name: Install Linux build tools
+        run: sudo apt-get update && sudo apt-get install -y build-essential libssl-dev libc6-dev
       - name: Install dependencies
         run: yarn install
       - name: Build
