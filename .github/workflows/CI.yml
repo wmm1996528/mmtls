@@ -1,7 +1,7 @@
 name: CI
 env:
   DEBUG: napi:*
-  APP_NAME: package-template
+  APP_NAME: mmtls
   MACOSX_DEPLOYMENT_TARGET: '10.13'
   CARGO_INCREMENTAL: '1'
 'on':
@@ -26,27 +26,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - name: Setup node
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'yarn'
-
+          cache: yarn
       - name: Install
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
-
       - name: Install dependencies
         run: yarn install
-
       - name: Oxlint
         run: yarn lint
-
       - name: Cargo fmt
         run: cargo fmt -- --check
-
       - name: Clippy
         run: cargo clippy
   build:
@@ -54,15 +48,6 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            build: yarn build --target x86_64-apple-darwin
-          - host: windows-latest
-            build: yarn build --target x86_64-pc-windows-msvc
-            target: x86_64-pc-windows-msvc
-          - host: windows-latest
-            build: yarn build --target i686-pc-windows-msvc
-            target: i686-pc-windows-msvc
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             build: yarn build --target x86_64-unknown-linux-gnu --use-napi-cross
@@ -72,27 +57,6 @@ jobs:
           - host: macos-latest
             target: aarch64-apple-darwin
             build: yarn build --target aarch64-apple-darwin
-          - host: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            build: yarn build --target aarch64-unknown-linux-gnu --use-napi-cross
-          - host: ubuntu-latest
-            target: armv7-unknown-linux-gnueabihf
-            build: yarn build --target armv7-unknown-linux-gnueabihf --use-napi-cross
-          - host: ubuntu-latest
-            target: aarch64-linux-android
-            build: yarn build --target aarch64-linux-android
-          - host: ubuntu-latest
-            target: armv7-linux-androideabi
-            build: yarn build --target armv7-linux-androideabi
-          - host: ubuntu-latest
-            target: aarch64-unknown-linux-musl
-            build: yarn build --target aarch64-unknown-linux-musl -x
-          - host: windows-latest
-            target: aarch64-pc-windows-msvc
-            build: yarn build --target aarch64-pc-windows-msvc
-          - host: ubuntu-latest
-            target: wasm32-wasip1-threads
-            build: yarn build --target wasm32-wasip1-threads
     name: stable - ${{ matrix.settings.target }} - node@22
     runs-on: ${{ matrix.settings.host }}
     steps:
@@ -162,7 +126,7 @@ jobs:
           version: '15.0'
           memory: 8G
           cpu_count: 3
-          environment_variables: 'DEBUG RUSTUP_IO_THREADS'
+          environment_variables: DEBUG RUSTUP_IO_THREADS
           shell: bash
           run: |
             sudo pkg install -y -f curl node libnghttp2 npm cmake
@@ -192,50 +156,6 @@ jobs:
           name: bindings-freebsd
           path: ${{ env.APP_NAME }}.*.node
           if-no-files-found: error
-  test-macOS-windows-binding:
-    name: Test bindings on ${{ matrix.settings.target }} - node@${{ matrix.node }}
-    needs:
-      - build
-    strategy:
-      fail-fast: false
-      matrix:
-        settings:
-          - host: windows-latest
-            target: x86_64-pc-windows-msvc
-            architecture: x64
-          - host: windows-11-arm
-            target: aarch64-pc-windows-msvc
-            architecture: arm64
-          - host: macos-latest
-            target: aarch64-apple-darwin
-            architecture: arm64
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            architecture: x64
-        node:
-          - '20'
-          - '22'
-    runs-on: ${{ matrix.settings.host }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node }}
-          cache: yarn
-          architecture: ${{ matrix.settings.architecture }}
-      - name: Install dependencies
-        run: yarn install
-      - name: Download artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: bindings-${{ matrix.settings.target }}
-          path: .
-      - name: List packages
-        run: ls -R .
-        shell: bash
-      - name: Test bindings
-        run: yarn test
   test-linux-binding:
     name: Test ${{ matrix.target }} - node@${{ matrix.node }}
     needs:
@@ -246,9 +166,6 @@ jobs:
         target:
           - x86_64-unknown-linux-gnu
           - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-gnu
-          - aarch64-unknown-linux-musl
-          - armv7-unknown-linux-gnueabihf
         node:
           - '20'
           - '22'
@@ -304,36 +221,8 @@ jobs:
         with:
           image: ${{ steps.docker.outputs.IMAGE }}
           name: test-bindings-${{ matrix.target }}
-          options: -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}
+          options: '-v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}'
           args: yarn test
-  test-wasi:
-    name: Test WASI target
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: yarn
-      - name: Install dependencies
-        run: |
-          yarn config set supportedArchitectures.cpu "wasm32"
-          yarn install
-      - name: Download artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: bindings-wasm32-wasip1-threads
-          path: .
-      - name: List packages
-        run: ls -R .
-        shell: bash
-      - name: Test bindings
-        run: yarn test
-        env:
-          NAPI_RS_FORCE_WASI: 1
   publish:
     name: Publish
     runs-on: ubuntu-latest
@@ -343,9 +232,7 @@ jobs:
     needs:
       - lint
       - build-freebsd
-      - test-macOS-windows-binding
       - test-linux-binding
-      - test-wasi
     steps:
       - uses: actions/checkout@v6
       - name: Setup node

@@ -1,5 +1,5 @@
 {
-  "name": "@napi-rs/package-template",
+  "name": "@wangmemory11/mmtls",
   "version": "1.0.0",
   "description": "Template project for writing node package with napi-rs",
   "main": "index.js",
@@ -23,22 +23,11 @@
     "browser.js"
   ],
   "napi": {
-    "binaryName": "package-template",
+    "binaryName": "mmtls",
     "targets": [
-      "x86_64-pc-windows-msvc",
-      "x86_64-apple-darwin",
       "x86_64-unknown-linux-gnu",
       "x86_64-unknown-linux-musl",
-      "aarch64-unknown-linux-gnu",
-      "i686-pc-windows-msvc",
-      "armv7-unknown-linux-gnueabihf",
       "aarch64-apple-darwin",
-      "aarch64-linux-android",
-      "x86_64-unknown-freebsd",
-      "aarch64-unknown-linux-musl",
-      "aarch64-pc-windows-msvc",
-      "armv7-linux-androideabi",
-      "wasm32-wasip1-threads"
     ]
   },
   "engines": {
