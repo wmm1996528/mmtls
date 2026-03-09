@@ -128,7 +128,9 @@ impl TlsClient {
       .headers(default_header.clone());
     client_builder = client_builder.emulation(builder.build());
     client_builder = client_builder.default_headers(default_header);
-    client_builder = client_builder.timeout(time::Duration::from_secs(opts.timeout));
+    if let Some(t) = opt.timeout{
+      client_builder = client_builder.timeout(time::Duration::from_secs(opts.timeout));
+    }
     let client = client_builder.build().unwrap();
     Self {
       client: Mutex::new(client),
