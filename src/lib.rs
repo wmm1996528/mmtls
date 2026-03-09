@@ -1,4 +1,5 @@
 mod traits;
+use std::time::Duration;
 use ::cookie::CookieBuilder;
 use ::wreq::cookie::Cookie;
 use foldhash::fast::RandomState;
@@ -39,7 +40,7 @@ pub struct ClientOptions {
   pub header_order: Option<Vec<String>>,
   pub split_cookies: Option<bool>,
   pub debug: Option<bool>,
-  pub timeout: i32,
+  pub timeout: Option<i32>,
 }
 
 #[napi]
@@ -129,7 +130,7 @@ impl TlsClient {
     client_builder = client_builder.emulation(builder.build());
     client_builder = client_builder.default_headers(default_header);
     if let Some(t) = opt.timeout{
-      client_builder = client_builder.timeout(time::Duration::from_secs(opts.timeout));
+      client_builder = client_builder.timeout(Duration::from_secs(t as u64));
     }
     let client = client_builder.build().unwrap();
     Self {
