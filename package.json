@@ -102,10 +102,5 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.12.0",
-  "optionalDependencies": {
-    "@wangmemory11/mmtls-linux-x64-gnu": "1.0.0",
-    "@wangmemory11/mmtls-linux-x64-musl": "1.0.0",
-    "@wangmemory11/mmtls-darwin-arm64": "1.0.0"
-  }
+  "packageManager": "yarn@4.12.0"
 }
