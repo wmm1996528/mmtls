@@ -20,8 +20,6 @@ use wreq::http2::{StreamDependency, StreamId};
 use wreq::redirect::Policy;
 use wreq::{cookie, cookie::Jar, Client, EmulationFactory, Proxy};
 use wreq_util::Emulation::Chrome141;
-use futures::prelude::*;
-use napi::bindgen_prelude::*;
 type IndexMapSSR = IndexMap<String, String, RandomState>;
 
 // 1. 创建一个全局的 Tokio Runtime
