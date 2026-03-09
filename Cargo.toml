@@ -2,19 +2,40 @@
 [package]
 authors = ["LongYinan <lynweklm@gmail.com>"]
 edition = "2021"
-name = "mmtls"
+name    = "mmtls"
 version = "0.1.0"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = "3.0.0"
-napi-derive = "3.0.0"
+futures = "0.3.32"
+http = "1.4.0"
+napi = { version = "3.8.3", features = ["full"] }
+napi-derive = "3.5.2"
+once_cell = "1.21.3"
+tokio = { version = "1.49.0", features = ["fs", "full"] }
+uuid = { version = "1.16.0", features = ["v4"] }
+wreq = { version = "6.0.0-rc.20", features = [
+  "json",
+  "cookies",
+  "socks",
+  "gzip",
+  "brotli",
+  "zstd",
+  "deflate",
+  "multipart",
+  "stream",
+] }
 
+anyhow    = "1.0.102"
+cookie    = "0.18.1"
+foldhash  = "0.2.0"
+indexmap  = "2.13.0"
+wreq-util = "3.0.0-rc.6"
 [build-dependencies]
 napi-build = "2"
 
 [profile.release]
-lto = true
+lto   = true
 strip = "symbols"

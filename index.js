@@ -557,4 +557,8 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
-module.exports.plus100 = nativeBinding.plus100
+module.exports.ClientOptions = nativeBinding.ClientOptions
+module.exports.QueryEngine = nativeBinding.QueryEngine
+module.exports.JsQueryEngine = nativeBinding.JsQueryEngine
+module.exports.TlsClient = nativeBinding.TlsClient
+module.exports.newOptions = nativeBinding.newOptions
